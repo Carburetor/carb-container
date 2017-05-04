@@ -28,9 +28,10 @@ module Carb::Container
     # @raise [TypeError] raised if dependency is not a {Proc}
     # @raise [AlreadyRegisteredError] raise when a dependency with same name
     #   already exists
-    # @return [Proc] the registered dependency
+    # @return [RegistryContainer] self (for chaining purposes)
     def register(name, dependency)
       register_with_caller(name, dependency, caller[0])
+      self
     end
 
     # Gets a dependency

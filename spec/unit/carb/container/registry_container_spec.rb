@@ -26,6 +26,14 @@ RSpec.describe Carb::Container::RegistryContainer do
       expect(container[:foo]).to eq 123
     end
 
+    it "returns self" do
+      container = Carb::Container::RegistryContainer.new
+
+      self_container = container.register(:foo, -> { 123 })
+
+      expect(self_container).to be container
+    end
+
     it "raises when dependency is not a proc" do
       container = Carb::Container::RegistryContainer.new
 
