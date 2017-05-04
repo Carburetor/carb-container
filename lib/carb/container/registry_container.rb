@@ -1,9 +1,12 @@
 require "carb"
+require "carb/container/already_registered_error"
 
 module Carb::Container
   # Simple {Hash} based container for dependency resolution based on name, with
   # further registration capabilities
   class RegistryContainer
+    DependencyHolder = Struct.new(:dependency, :registerer)
+
     private
 
     attr_reader :dependencies
@@ -14,7 +17,9 @@ module Carb::Container
     #   as value, which will be `call`ed to extract the dependency object
     def initialize(dependencies)
       @dependencies = {}
-      dependencies.each { |name, dep| register(name, dep) }
+      dependencies.each do |name, dep|
+        register_with_caller(name, dependency, caller[0])
+      end
     end
 
     # @param name [Object] name used to fetch back the dependency
@@ -25,10 +30,7 @@ module Carb::Container
     #   already exists
     # @return [Proc] the registered dependency
     def register(name, dependency)
-      ensure_dependency_type!(dependency)
-      ensure_dependency_uniqueness!(name)
-
-      dependencies[name] = dependency
+      register_with_caller(name, dependency, caller[0])
     end
 
     # Gets a dependency
@@ -36,7 +38,7 @@ module Carb::Container
     # @return [nil, Object] nil if dependency is missing, otherwise the
     #   dependency, unwrapped from proc
     def [](name)
-      dependencies[name].()
+      dependencies[name].dependency.()
     end
 
     # Checks if the dependency exists within the container
@@ -49,6 +51,13 @@ module Carb::Container
 
     private
 
+    def register_with_caller(name, dependency, registerer)
+      ensure_dependency_type!(dependency)
+      ensure_dependency_uniqueness!(name)
+
+      dependencies[name] = DependencyHolder.new(dependency, registerer)
+    end
+
     def ensure_dependency_type!(dependency)
       unless dependency.respond_to?(:call)
         raise TypeError, "dependency must be a Proc"
@@ -57,9 +66,13 @@ module Carb::Container
 
     def ensure_dependency_uniqueness!(name)
       if dependencies.has_key?(name)
-        error_class = AlreadyRegisteredError
-        raise error_class.new(name), format(error_class::MESSAGE, name.to_s)
+        raise AlreadyRegisteredError.new(name), registered(name, self[name])
       end
+    end
+
+    def registered(name, dependency_holder)
+      registerer = dependency_holder.registerer
+      format(AlreadyRegisteredError::MESSAGE, name.to_s, registerer.to_s)
     end
   end
 end
