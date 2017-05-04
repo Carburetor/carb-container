@@ -18,7 +18,7 @@ module Carb::Container
     def initialize(dependencies = {})
       @dependencies = {}
       dependencies.each do |name, dep|
-        register_with_caller(name, dep, caller[0])
+        register_with_caller(name, dep, caller_locations[0])
       end
     end
 
@@ -30,7 +30,8 @@ module Carb::Container
     #   already exists
     # @return [RegistryContainer] self (for chaining purposes)
     def register(name, dependency)
-      register_with_caller(name, dependency, caller[0])
+      register_with_caller(name, dependency, caller_locations[0])
+      # register_with_caller(name, dependency, caller[0])
       self
     end
 

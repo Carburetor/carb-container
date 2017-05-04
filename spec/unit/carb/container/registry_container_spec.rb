@@ -52,6 +52,20 @@ RSpec.describe Carb::Container::RegistryContainer do
         Carb::Container::AlreadyRegisteredError
       )
     end
+
+    it "raises with registerer method name inside exception" do
+      container = Carb::Container::RegistryContainer.new
+      error     = nil
+      container.register(:foo, -> { 123 })
+
+      begin
+        container.register(:foo, -> { 123 })
+      rescue Carb::Container::AlreadyRegisteredError => exc
+        error = exc
+      end
+
+      expect(error.message).to include __FILE__.to_s
+    end
   end
 
   describe "#has_key?" do
