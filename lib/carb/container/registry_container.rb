@@ -5,7 +5,7 @@ module Carb::Container
   # Simple {Hash} based container for dependency resolution based on name, with
   # further registration capabilities
   class RegistryContainer
-    DependencyHolder = Struct.new(:dependency, :registerer)
+    Record = Struct.new(:dependency, :registerer)
 
     private
 
@@ -18,7 +18,7 @@ module Carb::Container
     def initialize(dependencies = {})
       @dependencies = {}
       dependencies.each do |name, dep|
-        register_with_caller(name, dependency, caller[0])
+        register_with_caller(name, dep, caller[0])
       end
     end
 
@@ -55,7 +55,7 @@ module Carb::Container
       ensure_dependency_type!(dependency)
       ensure_dependency_uniqueness!(name)
 
-      dependencies[name] = DependencyHolder.new(dependency, registerer)
+      dependencies[name] = Record.new(dependency, registerer)
     end
 
     def ensure_dependency_type!(dependency)
@@ -66,13 +66,13 @@ module Carb::Container
 
     def ensure_dependency_uniqueness!(name)
       if dependencies.has_key?(name)
-        holder = dependencies.fetch(name)
-        raise AlreadyRegisteredError.new(name), registered(name, holder)
+        record = dependencies.fetch(name)
+        raise AlreadyRegisteredError.new(name), registered(name, record)
       end
     end
 
-    def registered(name, dependency_holder)
-      registerer = dependency_holder.registerer
+    def registered(name, record)
+      registerer = record.registerer
       format(AlreadyRegisteredError::MESSAGE, name.to_s, registerer.to_s)
     end
   end
