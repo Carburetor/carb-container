@@ -15,7 +15,7 @@ module Carb::Container
 
     # @param dependencies [Hash{Object => Proc}] dependency name with proc
     #   as value, which will be `call`ed to extract the dependency object
-    def initialize(dependencies)
+    def initialize(dependencies = {})
       @dependencies = {}
       dependencies.each do |name, dep|
         register_with_caller(name, dependency, caller[0])
@@ -66,7 +66,8 @@ module Carb::Container
 
     def ensure_dependency_uniqueness!(name)
       if dependencies.has_key?(name)
-        raise AlreadyRegisteredError.new(name), registered(name, self[name])
+        holder = dependencies.fetch(name).registerer
+        raise AlreadyRegisteredError.new(name), registered(name, holder)
       end
     end
 
