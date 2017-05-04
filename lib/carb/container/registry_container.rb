@@ -66,7 +66,7 @@ module Carb::Container
 
     def ensure_dependency_uniqueness!(name)
       if dependencies.has_key?(name)
-        holder = dependencies.fetch(name).registerer
+        holder = dependencies.fetch(name)
         raise AlreadyRegisteredError.new(name), registered(name, holder)
       end
     end
