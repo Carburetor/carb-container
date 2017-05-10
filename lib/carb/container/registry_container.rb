@@ -4,6 +4,8 @@ require "carb/container/already_registered_error"
 require "carb/container/dependency_missing_error"
 
 module Carb::Container
+  include ::Carb::Container::Base
+
   # Simple {Hash} based container for dependency resolution based on name, with
   # further registration capabilities
   class RegistryContainer

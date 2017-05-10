@@ -89,7 +89,7 @@ RSpec.describe Carb::Container::RegistryContainer do
       container  = Carb::Container::RegistryContainer.new
       error_type = Carb::Container::DependencyMissingError
 
-      expect{container[:foo]}.to raise_error error_type
+      expect { container[:foo] }.to raise_error error_type
     end
 
     it "returns `call`ed registered dependency" do
