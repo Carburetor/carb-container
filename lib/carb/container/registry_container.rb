@@ -1,10 +1,14 @@
 require "carb"
+require "carb/container/base"
 require "carb/container/already_registered_error"
+require "carb/container/dependency_missing_error"
 
 module Carb::Container
   # Simple {Hash} based container for dependency resolution based on name, with
   # further registration capabilities
   class RegistryContainer
+    include ::Carb::Container::Base
+
     Record = Struct.new(:dependency, :registerer)
 
     private
@@ -31,7 +35,6 @@ module Carb::Container
     # @return [RegistryContainer] self (for chaining purposes)
     def register(name, dependency)
       register_with_caller(name, dependency, caller_locations[0])
-      # register_with_caller(name, dependency, caller[0])
       self
     end
 
@@ -40,6 +43,8 @@ module Carb::Container
     # @return [nil, Object] nil if dependency is missing, otherwise the
     #   dependency, unwrapped from proc
     def [](name)
+      ensure_dependency_present!(name)
+
       dependencies[name].dependency.()
     end
 
@@ -60,22 +65,32 @@ module Carb::Container
       dependencies[name] = Record.new(dependency, registerer)
     end
 
+    def ensure_dependency_present!(name)
+      return if has_key?(name)
+
+      raise DependencyMissingError.new(name), missing(name)
+    end
+
     def ensure_dependency_type!(dependency)
-      unless dependency.respond_to?(:call)
-        raise TypeError, "dependency must be a Proc"
-      end
+      return if dependency.respond_to?(:call)
+
+      raise TypeError, "dependency must be a Proc"
     end
 
     def ensure_dependency_uniqueness!(name)
-      if dependencies.has_key?(name)
-        record = dependencies.fetch(name)
-        raise AlreadyRegisteredError.new(name), registered(name, record)
-      end
+      return unless dependencies.has_key?(name)
+
+      record = dependencies.fetch(name)
+      raise AlreadyRegisteredError.new(name), registered(name, record)
     end
 
     def registered(name, record)
       registerer = record.registerer
       format(AlreadyRegisteredError::MESSAGE, name.to_s, registerer.to_s)
+    end
+
+    def missing(name)
+      format(DependencyMissingError::MESSAGE, name.to_s)
     end
   end
 end

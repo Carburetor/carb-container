@@ -1,6 +1,7 @@
 require "spec_helper"
 require "carb/container/registry_container"
 require "carb/container/already_registered_error"
+require "carb/container/dependency_missing_error"
 
 RSpec.describe Carb::Container::RegistryContainer do
   it "can be initialized with a hashmap of dependencies" do
@@ -79,8 +80,23 @@ RSpec.describe Carb::Container::RegistryContainer do
       container = Carb::Container::RegistryContainer.new
       container.register(:foo, -> { 123 })
 
-
       expect(container.has_key?(:foo)).to be true
+    end
+  end
+
+  describe "#[]" do
+    it "raises when dependency name is not registered" do
+      container  = Carb::Container::RegistryContainer.new
+      error_type = Carb::Container::DependencyMissingError
+
+      expect{container[:foo]}.to raise_error error_type
+    end
+
+    it "returns `call`ed registered dependency" do
+      container = Carb::Container::RegistryContainer.new
+      container.register(:foo, -> { 123 })
+
+      expect(container[:foo]).to eq 123
     end
   end
 end
