@@ -1,4 +1,5 @@
 require "carb"
+require "carb/container/base"
 require "carb/container/dependency_missing_error"
 
 module Carb::Container
