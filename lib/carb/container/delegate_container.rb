@@ -16,8 +16,8 @@ module Carb::Container
 
     public
 
-    # @param containers [Array<#[], #has_key?>] Must have at least one
-    #   container
+    # @param containers [Array] an array of container objects. Must have at
+    #   least one container
     # @raise [ArgumentError] unless at least one container is supplied
     def initialize(containers, **dependencies)
       @containers   = containers
