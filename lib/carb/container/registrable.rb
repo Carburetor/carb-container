@@ -1,14 +1,10 @@
 require "carb"
+require "carb/container/container_hook_missing_error"
 
 module Carb::Container
-  # Provides a method hook in all classes to register them as injectable
-  class Registrable
-    def call(container)
-      # TODO: Inject stuff in Class to provide a `carb_container as: :name`
-    end
-
-    def self.call(container)
-      new.call(container, name: name)
+  module Registrable
+    def carb_container(as: nil)
+      container = instance_variable_get()
     end
   end
 end
