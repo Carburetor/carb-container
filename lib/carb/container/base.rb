@@ -1,6 +1,7 @@
 require "carb"
 
 module Carb::Container
+  # Interface for container definition
   module Base
     def [](name)
       raise NotImplementedError, "#[] not implemented"
