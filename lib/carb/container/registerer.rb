@@ -25,11 +25,20 @@ module Carb::Container
     private
 
     def maybe_snake_case(text)
+      return text unless maybe_require_activesupport
       return text unless defined?(::ActiveSupport)
       return text.underscore if text.respond_to?(:underscore)
 
-      require "active_support/inflector/methods"
       ActiveSupport::Inflector.underscore(text)
+    end
+  end
+
+  def maybe_require_activesupport
+    begin
+      require "active_support/inflector/methods"
+      true
+    rescue
+      false
     end
   end
 end
