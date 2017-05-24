@@ -11,6 +11,9 @@ module Carb::Container
 
     # @param container [#register] object which will be used to register
     #   dependencies as {::Proc}
+    # @param converter [#call] object which accepts a string and converts it
+    #   into a valid method name. It's used to convert class name to a method
+    #   name. By default it uses an instance of {ClassNameToMethodName}
     def initialize(container, converter: ClassNameToMethodName.new)
       @container = container
       @converter = converter
