@@ -12,10 +12,9 @@ module Carb::Container
     end
 
     def included(klass)
-      # TODO: Test registerer and registration glue
       # Required for scope purposes
       cont = container
-      klass.send(:define_method, :carb_container) do |as: nil|
+      klass.define_singleton_method(:carb_container) do |as: nil|
         as ||= maybe_snake_case(self.name.to_s)
         as   = as.to_sym
         cont.register(as, -> { self })
