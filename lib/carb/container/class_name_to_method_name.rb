@@ -1,6 +1,8 @@
 require "carb"
 
 module Carb::Container
+  # Converts a fully qualified class name to a valid method name. Uses
+  # activesupport if available, otherwise just replaces / with _
   class ClassNameToMethodName
     def call(text)
       snaked = maybe_snake_case(text)
