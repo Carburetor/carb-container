@@ -3,7 +3,7 @@ require "carb/container/registry_container"
 require "carb/container/already_registered_error"
 require "carb/container/dependency_missing_error"
 
-RSpec.describe Carb::Container::RegistryContainer do
+describe Carb::Container::RegistryContainer do
   it "can be initialized with a hashmap of dependencies" do
     deps      = { foo: -> { 123 } }
     container = Carb::Container::RegistryContainer.new(deps)

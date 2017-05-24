@@ -7,6 +7,8 @@ require "carb/container/container_validator"
 require "carb/container/registry_container"
 require "carb/container/error_container"
 require "carb/container/delegate_container"
+require "carb/container/registerer"
+require "carb/container/registration_glue"
 
 module Carb
   module Container
