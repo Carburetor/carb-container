@@ -7,20 +7,22 @@ module Carb::Container
     private
 
     attr_reader :container
+    attr_reader :converter
 
-    def initialize(container)
+    def initialize(container, converter: ClassNameToMethodName.new)
       @container = container
+      @converter = converter
     end
 
     def included(klass)
       # Required for scope purposes
-      cont       = container
-      snake_case = ClassNameToMethodName.new
+      kontainer = container
+      convert   = converter
 
       klass.define_singleton_method(:carb_container) do |as: nil|
-        as ||= snake_case.call(self.name.to_s)
+        as ||= convert.call(self.name.to_s)
         as   = as.to_sym
-        cont.register(as, -> { self })
+        kontainer.register(as, -> { self })
       end
     end
   end
