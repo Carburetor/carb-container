@@ -1,4 +1,5 @@
 require "carb"
+require "carb/container/class_name_to_method_name"
 
 module Carb::Container
   # Provides a class method to register classes globally
@@ -13,29 +14,14 @@ module Carb::Container
 
     def included(klass)
       # Required for scope purposes
-      cont = container
+      cont       = container
+      snake_case = ClassNameToMethodName.new
+
       klass.define_singleton_method(:carb_container) do |as: nil|
-        as ||= maybe_snake_case(self.name.to_s)
+        as ||= snake_case.call(self.name.to_s)
         as   = as.to_sym
         cont.register(as, -> { self })
       end
-    end
-
-    private
-
-    def maybe_snake_case(text)
-      return text unless maybe_require_activesupport
-      return text unless defined?(::ActiveSupport)
-      return text.underscore if text.respond_to?(:underscore)
-
-      ActiveSupport::Inflector.underscore(text)
-    end
-
-    def maybe_require_activesupport
-      require "active_support/inflector/methods"
-      true
-    rescue
-      false
     end
   end
 end
