@@ -86,11 +86,57 @@ class Dog
   end
 end
 
-person = container[:my_person].new
-dog = container[:special_dog].new
+person = MyContainer[:my_person].new
+dog    = MyContainer[:special_dog].new
 
 person.greet
 person.bark
+```
+
+### Carb::Container::DelegateContainer
+
+Special container which allows chaining containers together so that a
+dependency not found in the first one, is searched in the subsequent ones. If
+no dependency is found, `Carb::Container::DependencyMissingError` is raised.
+
+```ruby
+Container1 = Carb::Container::RegistryContainer.new
+Container2 = Carb::Container::RegistryContainer.new
+Delegate = Carb::Container::DelegateContainer.new([Container1, Container2])
+
+class Person
+  def greet
+    puts "hello"
+  end
+end
+
+class Dog
+  def bark
+    puts "woff"
+  end
+end
+
+Container1.register(:person, -> { Person })
+Container2.register(:dog, -> { Dog })
+
+Delegate[:dog] == Dog # => true
+Delegate[:person] == Person # => true
+
+Delegate[:foo] # raises DependencyMissingError
+```
+
+### Carb::Container::ErrorContainer
+
+Special container which doesn't allow to register any dependency, always
+raises `Carb::Container::DependencyMissingError` and always returns `false`
+for `has_key?` method. It's only useful within the DelegateContainer or as a
+null object (as in null object pattern).
+
+```ruby
+container = Carb::Container::ErrorContainer.new
+
+container[:foo] # raises DependencyMissingError
+container.has_key?(:bar) # => false
 ```
 
 ## Development
