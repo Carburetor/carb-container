@@ -42,7 +42,8 @@ be provided by the developer:
 This is the main container and probably the only one you will be using. It
 respects the `Carb::Container::Base` interface.
 It stores dependencies (with some utilities) in a hashmap and can be fetched
-back with `#[]`. To register a dependency you simply call
+back with `#[]` which raises `Carb::Container::DependencyMissingError` in
+case no dependency is found. To register a dependency you simply call
 `#register(name, dependency_enclosed_in_proc)` and it will be stored inside.
 
 ```ruby
