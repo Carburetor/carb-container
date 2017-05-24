@@ -9,6 +9,8 @@ module Carb::Container
     attr_reader :container
     attr_reader :converter
 
+    # @param container [#register] object which will be used to register
+    #   dependencies as {::Proc}
     def initialize(container, converter: ClassNameToMethodName.new)
       @container = container
       @converter = converter

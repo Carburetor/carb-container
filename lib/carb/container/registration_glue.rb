@@ -15,8 +15,16 @@ module Carb::Container
     # @param registerer [Module] subclass of a module which can be included.
     #   Usually it's {Registerer} which is an internal module used to store
     #   objects inside a container which responds to `#register`
-    def call(container, target: Class, registerer: Registerer)
-      target.send(:include, registerer.new(container))
+    # @param converter [#call] Object which accepts a string and converts it
+    #   into a valid method name. It's used to convert class name to a method
+    #   name. By default it uses {ClassNameToMethodName}
+    def call(
+      container,
+      target:     Class,
+      registerer: Registerer,
+      converter:  ClassNameToMethodName.new
+    )
+      target.send(:include, registerer.new(container, converter: converter))
     end
 
     class << self
