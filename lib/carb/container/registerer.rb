@@ -31,10 +31,8 @@ module Carb::Container
 
       ActiveSupport::Inflector.underscore(text)
     end
-  end
 
-  def maybe_require_activesupport
-    begin
+    def maybe_require_activesupport
       require "active_support/inflector/methods"
       true
     rescue

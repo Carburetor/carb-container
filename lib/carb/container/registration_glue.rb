@@ -1,5 +1,6 @@
 require "carb"
-require "carb/registerer"
+require "carb/container/registerer"
+require "forwardable"
 
 module Carb::Container
   # Provides a method hook in all classes to register them as injectable
@@ -8,8 +9,10 @@ module Carb::Container
       target.send(:include, registerer.new(container))
     end
 
-    def self.call(container, target: Class, registerer: Registerer)
-      new.call(container, target: target)
+    class << self
+      extend Forwardable
+
+      def_delegators :new, :call
     end
   end
 end
