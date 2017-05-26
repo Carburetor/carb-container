@@ -17,6 +17,13 @@ module Carb::Container
     def initialize(container, converter: ClassNameToMethodName.new)
       @container = container
       @converter = converter
+      self.module_eval do
+        def carb_container(as: nil)
+          as ||= converter.call(self.name.to_s)
+          as   = as.to_sym
+          container.register(as, -> { self })
+        end
+      end
     end
 
     def included(klass)
@@ -29,10 +36,6 @@ module Carb::Container
       #   as   = as.to_sym
       #   kontainer.register(as, -> { self })
       # end
-    end
-
-    def foo
-      puts 'asd'
     end
   end
 end
