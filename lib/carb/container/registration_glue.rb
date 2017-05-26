@@ -11,7 +11,7 @@ module Carb::Container
     #   {RegistryContainer} which responds to `#register(name, dependency)`,
     #   it's the only required argument
     # @param target [Object] class where you want to add the class method
-    #   `carb_container`. Usually it's {::Module} class so it's available on
+    #   `carb_container`. Usually it's {::Object} class so it's available on
     #   all classes
     # @param registerer [Module] subclass of a module which can be included.
     #   Usually it's {Registerer} which is an internal module used to store
@@ -21,7 +21,7 @@ module Carb::Container
     #   name. By default it uses an instance of {ClassNameToMethodName}
     def call(
       container,
-      target:     Module,
+      target:     Object,
       registerer: Registerer,
       converter:  ClassNameToMethodName.new
     )

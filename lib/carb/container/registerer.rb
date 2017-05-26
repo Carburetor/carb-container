@@ -24,11 +24,15 @@ module Carb::Container
       kontainer = container
       convert   = converter
 
-      klass.define_singleton_method(:carb_container) do |as: nil|
-        as ||= convert.call(self.name.to_s)
-        as   = as.to_sym
-        kontainer.register(as, -> { self })
-      end
+      # klass.define_singleton_method(:carb_container) do |as: nil|
+      #   as ||= convert.call(self.name.to_s)
+      #   as   = as.to_sym
+      #   kontainer.register(as, -> { self })
+      # end
+    end
+
+    def foo
+      puts 'asd'
     end
   end
 end
