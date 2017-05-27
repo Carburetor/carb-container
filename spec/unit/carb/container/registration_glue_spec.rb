@@ -3,29 +3,42 @@ require "carb/container/registration_glue"
 require "carb/container/registerer"
 
 describe Carb::Container::RegistrationGlue do
-  Glue = Carb::Container::RegistrationGlue
+  Registerer = Carb::Container::Registerer
 
   before do
-    @module     = instance_double(Carb::Container::Registerer)
-    @target     = class_spy(Class, include: nil)
-    @registerer = class_double(Carb::Container::Registerer, new: @module)
-  end
-
-  describe ".call" do
-    it "delegates without raising" do
-      Glue.call({}, target: @target, registerer: @registerer)
-
-      expect(@target).to have_received(:include).with(@module)
-    end
+    @glue       = Carb::Container::RegistrationGlue.new
+    @module     = instance_double(Registerer)
+    @target     = class_spy(Module, :<= => Module)
+    @registerer = class_double(Registerer, new: @module)
+    allow(@glue).to receive(:perform_include).and_return(nil)
   end
 
   describe "#call" do
     it "runs #include on @target with @module as argument" do
-      glue = Glue.new
+      @glue.call({}, target: @target, registerer: @registerer)
 
-      glue.call({}, target: @target, registerer: @registerer)
+      expect(@glue).to have_received(:perform_include).with(@module).
+        with(@target, :include, @module)
+    end
 
-      expect(@target).to have_received(:include).with(@module)
+    it "runs #include on @target if inherits from Module" do
+      other_module = Class.new(Module)
+      allow(other_module).to receive(:include).and_return(nil)
+
+      @glue.call({}, target: other_module, registerer: @registerer)
+
+      expect(@glue).to have_received(:perform_include).with(@module).
+        with(other_module, :include, @module)
+    end
+
+    it "runs #extend on @target if doesn't inherit from Module" do
+      other_module = Class.new
+      allow(other_module).to receive(:include).and_return(nil)
+
+      @glue.call({}, target: other_module, registerer: @registerer)
+
+      expect(@glue).to have_received(:perform_include).with(@module).
+        with(other_module, :extend, @module)
     end
   end
 end

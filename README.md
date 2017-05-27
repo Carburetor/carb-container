@@ -61,9 +61,9 @@ container[:my_class].new.hello
 
 ### Carb::Container::RegistrationGlue
 
-A utility class that allows you to create a class method inside `Class` so that
-you can easily register any newly created class. This is entirely optional, for
-people who don't like monkey patching, can be skipped.
+A utility class that allows you to create a class method inside `Module` so
+that you can easily register any newly created class. This is entirely
+optional, for people who don't like monkey patching, can be skipped.
 
 ```ruby
 MyContainer = Carb::Container::RegistryContainer.new
