@@ -19,7 +19,7 @@ module Carb::Container
       @converter = converter
       kontainer = container
       convert   = converter
-      def self.carb_container(as: nil)
+      define_method(:carb_container) do |as: nil|
         as ||= convert.call(self.name.to_s)
         as   = as.to_sym
         kontainer.register(as, -> { self })
