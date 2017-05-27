@@ -17,11 +17,13 @@ module Carb::Container
     def initialize(container, converter: ClassNameToMethodName.new)
       @container = container
       @converter = converter
+      kontainer = container
+      convert   = converter
       self.module_eval do
         def carb_container(as: nil)
-          as ||= converter.call(self.name.to_s)
+          as ||= convert.call(self.name.to_s)
           as   = as.to_sym
-          container.register(as, -> { self })
+          kontainer.register(as, -> { self })
         end
       end
     end
