@@ -10,9 +10,9 @@ module Carb::Container
     # @param container [#register] a generic object, usually a
     #   {RegistryContainer} which responds to `#register(name, dependency)`,
     #   it's the only required argument
-    # @param target [Object] class where you want to add the class method
-    #   `carb_container`. Usually it's {::Module} class so it's available on
-    #   all classes
+    # @param target [Class, Module] class where you want to add the class
+    #   method `carb_container`. Usually it's the {::Module} class so it's
+    #   available on all classes
     # @param registerer [Module] subclass of a module which can be included.
     #   Usually it's {Registerer} which is an internal module used to store
     #   objects inside a container which responds to `#register`
@@ -25,7 +25,26 @@ module Carb::Container
       registerer: Registerer,
       converter:  ClassNameToMethodName.new
     )
-      target.send(:include, registerer.new(container, converter: converter))
+      registerer_instance = registerer.new(container, converter: converter)
+
+      include_registerer(target, registerer_instance)
+    end
+
+    private
+
+    def perform_include(target, includer, registerer)
+      target.send(includer, registerer)
+    end
+
+    def include_registerer(target, registerer)
+      includer = inclusion_method(target)
+
+      perform_include(target, includer, registerer)
+    end
+
+    def inclusion_method(target)
+      return :include if target <= Module
+      :extend
     end
 
     class << self
