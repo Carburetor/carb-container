@@ -17,25 +17,18 @@ module Carb::Container
     def initialize(container, converter: ClassNameToMethodName.new)
       @container = container
       @converter = converter
-      kontainer = container
-      convert   = converter
+      def_carb_container(container, converter)
+    end
+
+    private
+
+    def def_carb_container(kontainer, convert)
       define_method(:carb_container) do |as: nil|
         as ||= convert.call(self.name.to_s)
         as   = as.to_sym
         kontainer.register(as, -> { self })
       end
-    end
-
-    def included(klass)
-      # Required for scope purposes
-      kontainer = container
-      convert   = converter
-
-      # klass.define_singleton_method(:carb_container) do |as: nil|
-      #   as ||= convert.call(self.name.to_s)
-      #   as   = as.to_sym
-      #   kontainer.register(as, -> { self })
-      # end
+      send(:protected, :carb_container)
     end
   end
 end
