@@ -7,14 +7,12 @@ describe Carb::Container::Registerer do
     @container = spy("Container", register: nil)
   end
 
-  describe "#included" do
-    it "creates .carb_container method on the including class" do
-      registerer = Carb::Container::Registerer.new(@container)
+  it "creates .carb_container method on the extending class" do
+    registerer = Carb::Container::Registerer.new(@container)
 
-      klass = Class.new { include registerer }
+    klass = Class.new { extend registerer }
 
-      expect(klass).to respond_to(:carb_container)
-    end
+    expect(klass.protected_methods).to include :carb_container
   end
 
   describe ".carb_container" do
@@ -22,7 +20,7 @@ describe Carb::Container::Registerer do
       registerer = Carb::Container::Registerer.new(@container)
 
       Class.new do
-        include registerer
+        extend registerer
         carb_container as: :foo
       end
 
@@ -34,7 +32,7 @@ describe Carb::Container::Registerer do
       registerer = Carb::Container::Registerer.new(container)
 
       klass = Class.new do
-        include registerer
+        extend registerer
         carb_container as: :foo
       end
 
@@ -44,7 +42,7 @@ describe Carb::Container::Registerer do
     it "guesses class name when registering" do
       container  = Carb::Container::RegistryContainer.new
       registerer = Carb::Container::Registerer.new(container)
-      klass      = Class.new { include registerer }
+      klass      = Class.new { extend registerer }
       stub_const("Foo::MyClass", klass)
 
       Foo::MyClass.send(:carb_container)
