@@ -19,12 +19,10 @@ module Carb::Container
       @converter = converter
       kontainer = container
       convert   = converter
-      self.module_eval do
-        def carb_container(as: nil)
-          as ||= convert.call(self.name.to_s)
-          as   = as.to_sym
-          kontainer.register(as, -> { self })
-        end
+      def self.carb_container(as: nil)
+        as ||= convert.call(self.name.to_s)
+        as   = as.to_sym
+        kontainer.register(as, -> { self })
       end
     end
 
