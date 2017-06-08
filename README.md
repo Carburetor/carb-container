@@ -61,9 +61,10 @@ container[:my_class].new.hello
 
 ### Carb::Container::RegistrationGlue
 
-A utility class that allows you to create a class method inside `Module` so
-that you can easily register any newly created class. This is entirely
-optional, for people who don't like monkey patching, can be skipped.
+A utility class that makes the method `carb_container` available as class 
+class method in all classes so, that you can easily register any newly
+created class. This is entirely optional, for people who don't like monkey
+patching, can be skipped.
 
 ```ruby
 MyContainer = Carb::Container::RegistryContainer.new
@@ -94,11 +95,28 @@ person.greet
 person.bark
 ```
 
+#### carb_container
+
+This method accepts two options:
+
+- `as:` which accepts a `Symbol` and is the name which will be used to
+  register the class. If not supplied and `activesupport` is present, it will
+  be inferred by class name in snake_case
+- `initialize: false` by default the value is the same as the `initialize`
+  supplied to `RegistrationGlue` when invoked (which defaults to `false`).
+  When false, it will register the class itself as is, equivalent to calling
+  `mycontainer.register(:foo, -> { Foo })`, however if set to `true` it
+  store the dependency with a call to `new`, like
+  `mycontainer.register(:foo, -> { Foo.new })`, the class must have a
+  constructor without arguments
+
 `RegistrationGlue` also accepts an option when called:
 
 - `initialize: false` which can be set to `true` so that `carb_container` will
-  automatically store the classes with `new`, like `-> { MyClass.new }`
-  instead of just `-> { MyClass }`
+  automatically supply `initialize: true` instead (check `carb_container` for
+  more details)
+
+At this point, `carb_container` method
 
 ### Carb::Container::DelegateContainer
 
