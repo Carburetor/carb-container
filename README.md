@@ -4,6 +4,49 @@ A set of simple container objects to store dependencies. Can be used in
 conjuction with [carb-inject](https://github.com/Carburetor/carb-inject) as
 an IoC container.
 
+```ruby
+# Optional, used to auto convert class names to symbol
+require "active_support/inflector/methods"
+
+Container = Carb::Container::RegistryContainer.new
+Carb::Container::RegistrationGlue.call(Container)
+
+class Foo
+  carb_container as: :myfoo
+
+  def hello
+    "foo"
+  end
+end
+
+class Bar
+  carb_container
+
+  def hello
+    "bar"
+  end
+end
+
+class Baz
+  def hello
+    "baz"
+  end
+end
+
+Container.register(:special_baz, -> { Baz.new })
+
+# Now let's use the container to fetch various dependencies
+foo_class = Container[:myfoo]
+bar_class = Container[:bar]
+foo = foo_class.new
+bar = bar_class.new
+baz = Container[:special_baz]
+
+foo.hello # => "foo"
+bar.hello # => "bar"
+baz.hello # => "baz"
+```
+
 ## Installation
 
 Add this line to your application's Gemfile:
