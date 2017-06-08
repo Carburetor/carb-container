@@ -94,6 +94,12 @@ person.greet
 person.bark
 ```
 
+`RegistrationGlue` also accepts an option when called:
+
+- `initialize: false` which can be set to `true` so that `carb_container` will
+  automatically store the classes with `new`, like `-> { MyClass.new }`
+  instead of just `-> { MyClass }`
+
 ### Carb::Container::DelegateContainer
 
 Special container which allows chaining containers together so that a
