@@ -31,11 +31,11 @@ module Carb::Container
     private
 
     def def_carb_container(kontainer, auto_init, convert)
-      define_method(:carb_container) do |as: nil|
+      define_method(:carb_container) do |as: nil, init: auto_init|
         as ||= convert.call(self.name.to_s)
         as   = as.to_sym
-        kontainer.register(as, -> { self.new })     if auto_init
-        kontainer.register(as, -> { self })     unless auto_init
+        kontainer.register(as, -> { self.new })     if init
+        kontainer.register(as, -> { self })     unless init
       end
       send(:protected, :carb_container)
     end
