@@ -145,7 +145,7 @@ This method accepts two options:
 - `as:` which accepts a `Symbol` and is the name which will be used to
   register the class. If not supplied and `activesupport` is present, it will
   be inferred by class name in snake_case
-- `initialize: false` by default the value is the same as the `initialize`
+- `init: false` by default the value is the same as the `init`
   supplied to `RegistrationGlue` when invoked (which defaults to `false`).
   When false, it will register the class itself as is, equivalent to calling
   `mycontainer.register(:foo, -> { Foo })`, however if set to `true` it
@@ -155,8 +155,8 @@ This method accepts two options:
 
 `RegistrationGlue` also accepts an option when called:
 
-- `initialize: false` which can be set to `true` so that `carb_container` will
-  automatically supply `initialize: true` instead (check `carb_container` for
+- `init: false` which can be set to `true` so that `carb_container` will
+  automatically supply `init: true` instead (check `carb_container` for
   more details)
 
 At this point, `carb_container` method
