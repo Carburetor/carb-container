@@ -160,8 +160,6 @@ This method accepts two options:
   automatically supply `init: true` instead (check `carb_container` for
   more details)
 
-At this point, `carb_container` method
-
 ### Carb::Container::DelegateContainer
 
 Special container which allows chaining containers together so that a
