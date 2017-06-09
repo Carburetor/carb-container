@@ -3,6 +3,7 @@
 A set of simple container objects to store dependencies. Can be used in
 conjuction with [carb-inject](https://github.com/Carburetor/carb-inject) as
 an IoC container.
+Check the following example usage:
 
 ```ruby
 # Optional, used to auto convert class names to symbol
