@@ -14,10 +14,20 @@ describe Carb::Container::RegistrationGlue do
   end
 
   describe "#call" do
+    it "passes :init to registerer class when initializing it" do
+      map = {}
+      allow(@registerer).to receive(:new).and_return(@module)
+
+      @glue.call(map, init: true, target: @target, registerer: @registerer)
+
+      expect(@registerer).to have_received(:new).
+        with(map, init: true, converter: anything)
+    end
+
     it "runs #include on @target with @module as argument" do
       @glue.call({}, target: @target, registerer: @registerer)
 
-      expect(@glue).to have_received(:perform_include).with(@module).
+      expect(@glue).to have_received(:perform_include).
         with(@target, :include, @module)
     end
 
@@ -27,7 +37,7 @@ describe Carb::Container::RegistrationGlue do
 
       @glue.call({}, target: other_module, registerer: @registerer)
 
-      expect(@glue).to have_received(:perform_include).with(@module).
+      expect(@glue).to have_received(:perform_include).
         with(other_module, :include, @module)
     end
 
@@ -37,7 +47,7 @@ describe Carb::Container::RegistrationGlue do
 
       @glue.call({}, target: other_module, registerer: @registerer)
 
-      expect(@glue).to have_received(:perform_include).with(@module).
+      expect(@glue).to have_received(:perform_include).
         with(other_module, :extend, @module)
     end
   end

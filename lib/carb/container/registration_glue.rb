@@ -10,6 +10,9 @@ module Carb::Container
     # @param container [#register] a generic object, usually a
     #   {RegistryContainer} which responds to `#register(name, dependency)`,
     #   it's the only required argument
+    # @param init [Boolean] auto initialize classes by calling `#new` (without
+    #   arguments) if true when `carb_container` is called. By default is
+    #   `false`
     # @param target [Class, Module] class where you want to add the class
     #   method `carb_container`. Usually it's the {::Module} class so it's
     #   available on all classes
@@ -21,11 +24,16 @@ module Carb::Container
     #   name. By default it uses an instance of {ClassNameToMethodName}
     def call(
       container,
+      init:       false,
       target:     Module,
       registerer: Registerer,
       converter:  ClassNameToMethodName.new
     )
-      registerer_instance = registerer.new(container, converter: converter)
+      registerer_instance = registerer.new(
+        container,
+        init:       init,
+        converter:  converter
+      )
 
       include_registerer(target, registerer_instance)
     end
