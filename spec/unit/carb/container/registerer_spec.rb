@@ -49,5 +49,17 @@ describe Carb::Container::Registerer do
 
       expect(container[:foo_my_class]).to eq klass
     end
+
+    it "registers instance when invoked with init: true" do
+      container  = Carb::Container::RegistryContainer.new
+      registerer = Carb::Container::Registerer.new(container, init: true)
+
+      klass = Class.new do
+        extend registerer
+        carb_container as: :foo
+      end
+
+      expect(container[:foo]).to be_a klass
+    end
   end
 end
